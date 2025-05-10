@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cleveland Security Cameras Savings Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #1c2526;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #28a745;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .main-button {
+            background-color: #28a745;
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .main-button:hover {
+            background-color: #218838;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            color: #1c2526;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .results-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1001;
+        }
+        .results-content {
+            background-color: #ffffff;
+            color: #1c2526;
+            margin: 2% auto;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 800px;
+            width: 95%;
+            height: 90vh;
+            overflow-y: auto;
+        }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #1c2526;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        form {
+            display: grid;
+            gap: 15px;
+        }
+        label {
+            font-weight: bold;
+            color: #1c2526;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select, button {
+            padding: 10px;
+            border: 1px solid #28a745;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+        button {
+            background-color: #28a745;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            padding: 12px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #results-output {
+            white-space: pre-wrap;
+            font-size: 1em;
+        }
+        footer {
+            margin-top: 20px;
+            padding: 10px;
+            text-align: center;
+            color: #28a745;
+            font-size: 1em;
+        }
+        footer a {
+            color: #28a745;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 10px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .main-button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+            .modal-content, .results-content {
+                margin: 5% auto;
+                width: 95%;
+                padding: 15px;
+            }
+            input, select, button {
+                font-size: 0.9em;
+            }
+            footer {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cleveland Security Cameras Savings Calculator</h1>
+        <button class="main-button" onclick="openCalculator()">Calculate Your Savings</button>
+    </div>
+
+    <div id="calculator-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCalculator()">×</span>
+            <h2>Security Camera Savings Calculator</h2>
+            <form id="calculator-form">
+                <h3>Potential Losses Without Cameras</h3>
+                <div>
+                    <label for="theft-cost">Average Cost per Theft Incident ($):</label>
+                    <input type="number" id="theft-cost" min="0" value="5000" step="100" required>
+                </div>
+                <div>
+                    <label for="theft-frequency">Theft Incidents per Year:</label>
+                    <input type="number" id="theft-frequency" min="0" value="2" step="0.1" required>
+                </div>
+                <div>
+                    <label for="vandalism-cost">Average Cost per Vandalism Incident ($):</label>
+                    <input type="number" id="vandalism-cost" min="0" value="2000" step="100" required>
+                </div>
+                <div>
+                    <label for="vandalism-frequency">Vandalism Incidents per Year:</label>
+                    <input type="number" id="vandalism-frequency" min="0" value="1" step="0.1" required>
+                </div>
+                <div>
+                    <label for="liability-cost">Average Cost per Liability Claim ($):</label>
+                    <input type="number" id="liability-cost" min="0" value="10000" step="100" required>
+                </div>
+                <div>
+                    <label for="liability-frequency">Liability Claims per Year:</label>
+                    <input type="number" id="liability-frequency" min="0" value="0.5" step="0.1" required>
+                </div>
+
+                <h3>Security Camera System Costs</h3>
+                <div>
+                    <label for="equipment-cost">Equipment Cost ($):</label>
+                    <input type="number" id="equipment-cost" min="0" value="5000" step="100" required>
+                </div>
+                <div>
+                    <label for="installation-cost">Installation Cost ($):</label>
+                    <input type="number" id="installation-cost" min="0" value="2000" step="100" required>
+                </div>
+                <div>
+                    <label for="maintenance-cost">Annual Maintenance Cost ($):</label>
+                    <input type="number" id="maintenance-cost" min="0" value="500" step="50" required>
+                </div>
+                <div>
+                    <label for="years">Time Period (Years):</label>
+                    <input type="number" id="years" min="1" value="5" step="1" required>
+                </div>
+
+                <button type="button" onclick="calculate()">Calculate Savings</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="results-modal" class="results-modal">
+        <div class="results-content">
+            <span class="close" onclick="closeResults()">×</span>
+            <h2>Savings Results</h2>
+            <div id="results-output"></div>
+            <div>
+                <button onclick="saveAsPDF()">Save as PDF</button>
+                <button onclick="printResults()">Print</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Contact us: <a href="mailto:contact@clevelandsecuritycameras.com">contact@clevelandsecuritycameras.com</a> | Phone: <a href="tel:+12163338245">216-333-8245</a></p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        function openCalculator() {
+            document.getElementById('calculator-modal').style.display = 'block';
+        }
+
+        function closeCalculator() {
+            document.getElementById('calculator-modal').style.display = 'none';
+        }
+
+        function openResults() {
+            document.getElementById('results-modal').style.display = 'block';
+        }
+
+        function closeResults() {
+            document.getElementById('results-modal').style.display = 'none';
+            document.getElementById('results-output').innerHTML = '';
+        }
+
+        function calculate() {
+            // Get inputs
+            const theftCost = parseFloat(document.getElementById('theft-cost').value);
+            const theftFrequency = parseFloat(document.getElementById('theft-frequency').value);
+            const vandalismCost = parseFloat(document.getElementById('vandalism-cost').value);
+            const vandalismFrequency = parseFloat(document.getElementById('vandalism-frequency').value);
+            const liabilityCost = parseFloat(document.getElementById('liability-cost').value);
+            const liabilityFrequency = parseFloat(document.getElementById('liability-frequency').value);
+            const equipmentCost = parseFloat(document.getElementById('equipment-cost').value);
+            const installationCost = parseFloat(document.getElementById('installation-cost').value);
+            const maintenanceCost = parseFloat(document.getElementById('maintenance-cost').value);
+            const years = parseInt(document.getElementById('years').value);
+
+            // Validate inputs
+            if (isNaN(theftCost) || isNaN(theftFrequency) || isNaN(vandalismCost) || 
+                isNaN(vandalismFrequency) || isNaN(liabilityCost) || isNaN(liabilityFrequency) || 
+                isNaN(equipmentCost) || isNaN(installationCost) || isNaN(maintenanceCost) || 
+                isNaN(years) || years < 1) {
+                document.getElementById('results-output').innerHTML = '<span style="color: red;">Please fill in all fields with valid numbers (Years ≥ 1).</span>';
+                openResults();
+                return;
+            }
+
+            // Calculate annual losses without cameras
+            const annualTheftLoss = theftCost * theftFrequency;
+            const annualVandalismLoss = vandalismCost * vandalismFrequency;
+            const annualLiabilityLoss = liabilityCost * liabilityFrequency;
+            const totalAnnualLoss = annualTheftLoss + annualVandalismLoss + annualLiabilityLoss;
+
+            // Calculate total losses over time period
+            const totalLossWithoutCameras = totalAnnualLoss * years;
+
+            // Calculate camera system costs
+            const initialCameraCost = equipmentCost + installationCost;
+            const totalMaintenanceCost = maintenanceCost * years;
+            const totalCameraCost = initialCameraCost + totalMaintenanceCost;
+
+            // Calculate net savings
+            const netSavings = totalLossWithoutCameras - totalCameraCost;
+
+            // Format output
+            let output = `
+                <strong>Time Period:</strong> ${years} years<br>
+                <strong>Annual Losses Without Cameras:</strong><br>
+                - Theft: $${annualTheftLoss.toFixed(2)} (${theftFrequency} incidents × $${theftCost.toFixed(2)})<br>
+                - Vandalism: $${annualVandalismLoss.toFixed(2)} (${vandalismFrequency} incidents × $${vandalismCost.toFixed(2)})<br>
+                - Liability: $${annualLiabilityLoss.toFixed(2)} (${liabilityFrequency} claims × $${liabilityCost.toFixed(2)})<br>
+                <strong>Total Annual Loss:</strong> $${totalAnnualLoss.toFixed(2)}<br>
+                <strong>Total Loss Without Cameras:</strong> $${totalLossWithoutCameras.toFixed(2)} (over ${years} years)<br><br>
+                <strong>Security Camera System Costs:</strong><br>
+                - Equipment: $${equipmentCost.toFixed(2)}<br>
+                - Installation: $${installationCost.toFixed(2)}<br>
+                - Annual Maintenance: $${maintenanceCost.toFixed(2)}<br>
+                <strong>Total Camera System Cost:</strong> $${totalCameraCost.toFixed(2)} (over ${years} years)<br><br>
+                <strong>Net Savings:</strong> $${netSavings.toFixed(2)}<br>
+            `;
+
+            // Add interpretation
+            if (netSavings > 0) {
+                output += `<br><strong>Result:</strong> Installing a security camera system could save you $${netSavings.toFixed(2)} over ${years} years compared to potential losses without cameras.`;
+            } else if (netSavings < 0) {
+                output += `<br><strong>Result:</strong> The camera system costs $${Math.abs(netSavings).toFixed(2)} more than potential losses over ${years} years. Consider adjusting inputs or exploring additional benefits (e.g., insurance discounts).`;
+            } else {
+                output += `<br><strong>Result:</strong> The camera system costs equal the potential losses over ${years} years. Other benefits like deterrence and evidence may still justify installation.`;
+            }
+
+            document.getElementById('results-output').innerHTML = output;
+            closeCalculator();
+            openResults();
+        }
+
+        function saveAsPDF() {
+            if (window.jspdf && window.jspdf.jsPDF) {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const output = document.getElementById('results-output').innerText;
+                doc.setFontSize(12);
+                doc.text("Cleveland Security Cameras Savings Calculator Results", 10, 10);
+                doc.text(output, 10, 20, { maxWidth: 180 });
+                doc.save('savings-results.pdf');
+            } else {
+                alert('PDF library not loaded. Please try again.');
+            }
+        }
+
+        function printResults() {
+            const output = document.getElementById('results-output').innerHTML;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                    <head><title>Print Results</title></head>
+                    <body>
+                        <h2>Cleveland Security Cameras Savings Calculator Results</h2>
+                        <div>${output}</div>
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+            setTimeout(() => printWindow.close(), 1000);
+        }
+    </script>
+</body>
+</html>
